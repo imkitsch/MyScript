@@ -1,5 +1,4 @@
 # ubuntu 16.04~ubuntu20.04 php5.6~php8.0
-import requests
 
 #参数file
 file_to_use = "index"
